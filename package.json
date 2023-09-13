@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "core-js": "^3.32.2",
+    "num2fraction": "^1.2.2",
     "regenerator-runtime": "^0.14.0"
   }
 }

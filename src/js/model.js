@@ -2,7 +2,12 @@ import { API_URL } from './config';
 import { getJSON } from './helper';
 
 export const state = {
+  //contains all the data about the application so include the search res
   recipe: {},
+  search: {
+    query: '', // maybe for some data analytics in future
+    results: [],
+  },
 };
 
 export const loadRecipe = async function (id) {
@@ -32,3 +37,22 @@ export const loadRecipe = async function (id) {
 };
 
 //model also doesn't know about controller so implement in a way mvc rule follows.
+
+export const loadSearchResults = async function (query) {
+  try {
+    state.search.query = query;
+    const data = await getJSON(`${API_URL}?search=${query}`);
+    state.search.results = data.data.recipes.map(rec => {
+      return {
+        id: rec.id,
+        image: rec.image_url,
+        publisher: rec.publisher,
+        title: rec.title,
+      };
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+// while implementing a func start with model ->controller -> view

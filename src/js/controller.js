@@ -4,6 +4,7 @@ import 'regenerator-runtime/runtime'; // async await
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
+import paginationView from './views/paginationView.js';
 // scipts in parcel can't have imports/exports so make it a module || // in the newly created files by parcel the path is unavailable so we r gonna import the files and set the path. can import all kinds of assets via parcel.
 // const recipeContainer = document.querySelector('.recipe');
 
@@ -14,9 +15,9 @@ import resultsView from './views/resultsView.js';
 // parcel build/start && source prprty in pkg.json -> gives entry point to the parcel to start its work.
 //Parcel can compile your source code in multiple different ways simultaneously. These are called targets. For example, you could have a “modern” target that targets newer browsers and a “legacy” target for older browsers. The main field is intended for libraries. Libraries are modules that can be used by other projects. The main field specifies the file that should be loaded when someone requires your library. thatswhy only js files.
 // npm command: npm i Parcel@next(for newer version) -D(for dev dependency)
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 // loading a recipe
 const getRecipe = async function () {
@@ -49,11 +50,19 @@ const controlSearchResults = async function () {
     const query = searchView.getQuery();
     if (!query) return;
     await model.loadSearchResults(query);
-    resultsView.render(model.state.search.results);
+    // resultsView.render(model.state.search.results); for pagination create a func that will only send limited data to render each time.
+    resultsView.render(model.getSearchResults());
+
+    // render pagination
+    paginationView.render(model.state.search);
   } catch (err) {
     console.log(err);
   }
 };
+
+const controlPagination = function() {
+  
+}
 
 const init = function () {
   recipeView.addAllRender(getRecipe);

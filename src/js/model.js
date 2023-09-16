@@ -1,4 +1,4 @@
-import { API_URL } from './config';
+import { API_URL , RESULT_PER_PAGE} from './config';
 import { getJSON } from './helper';
 
 export const state = {
@@ -7,6 +7,9 @@ export const state = {
   search: {
     query: '', // maybe for some data analytics in future
     results: [],
+    page : 1,
+    // resultsPerPage : 10 magic no -> config
+    resultsPerPage : RESULT_PER_PAGE 
   },
 };
 
@@ -56,3 +59,12 @@ export const loadSearchResults = async function (query) {
 };
 
 // while implementing a func start with model ->controller -> view
+// In model while creating a new data see if it imp data & should it be incl in state.
+
+export const getSearchResults = function(page = state.search.page) {
+  state.search.page = page; // imp data for the state add it.
+  const start = (page-1) * state.search.resultsPerPage;
+  const end = page * state.search.resultsPerPage; // cuz one less for slice method
+  return state.search.results.slice(start, end);
+  // add resultsPerPage to state cuz its imp data
+}

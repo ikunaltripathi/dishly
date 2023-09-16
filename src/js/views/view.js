@@ -3,6 +3,7 @@ import icons from 'url:../../img/icons.svg';
 export default class View {
   _data;
   render(data) {
+    if (!data || Array.isArray(data) && data.length === 0) return this.renderError(); // !data works for undefined and nulll only & we are receiving an empty array
     this._data = data;
     const html = this._generateMarkup();
     this._clear();

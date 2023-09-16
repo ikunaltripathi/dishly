@@ -1,6 +1,6 @@
 import icons from 'url:../../img/icons.svg';
-import num2fraction from 'num2fraction';
 import View from './view';
+import num2fraction from 'num2fraction';
 // we import pkgs from npm when we want a functionality & don't wanna apply ourselves.(num2F)
 class RecipeView extends View {
   _parentEle = document.querySelector('.recipe');
@@ -55,9 +55,7 @@ class RecipeView extends View {
         </div>
     
         <div class="recipe__user-generated">
-          <svg>
-            <use href="${icons}#icon-user"></use>
-          </svg>
+  
         </div>
         <button class="btn--round">
           <svg class="">

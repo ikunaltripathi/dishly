@@ -9,8 +9,9 @@ export const state = {
     results: [],
     page : 1,
     // resultsPerPage : 10 magic no -> config
-    resultsPerPage : RESULT_PER_PAGE 
+    resultsPerPage : RESULT_PER_PAGE,
   },
+  bookmarks : []
 };
 
 export const loadRecipe = async function (id) {
@@ -23,6 +24,7 @@ export const loadRecipe = async function (id) {
     const { recipe } = data.data;
     state.recipe = {
       //assigning the ref to a new obj
+      id : recipe.id,
       image: recipe.image_url,
       time: recipe.cooking_time,
       ingredients: recipe.ingredients,
@@ -31,7 +33,10 @@ export const loadRecipe = async function (id) {
       source: recipe.source_url,
       title: recipe.title,
     };
-    // console.log(recipe);
+
+    // adding bookmarked prprty to each recipe loaded (basically we are loading these recipes straight from the api then how will we remember that curr recipe we have bookmarked or not thatswhy if we have prev done it then just add a prprty to it.)
+    if (state.bookmarks.some(bookmark => bookmark.id === id)) state.recipe.bookmarked = true;
+    else state.recipe.bookmarked = false;
   } catch (err) {
     // alert(err);
     // console.error(err);
@@ -53,6 +58,7 @@ export const loadSearchResults = async function (query) {
         title: rec.title,
       };
     });
+    state.search.page = 1;
   } catch (err) {
     throw err;
   }
@@ -68,3 +74,41 @@ export const getSearchResults = function(page = state.search.page) {
   return state.search.results.slice(start, end);
   // add resultsPerPage to state cuz its imp data
 }
+
+export const updateServings = function(newServings) {
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = ing.quantity * newServings / state.recipe.servings;
+  });
+  state.recipe.servings = newServings; 
+  // new Qty = oldQty * newServings /oldServings;
+};
+
+//bookmarks
+export const addBookmark = function(recipe) {
+  state.bookmarks.push(recipe);
+  if (recipe.id === state.recipe.id) state.recipe.bookmarked = true; // useful for updating in the view as well this prprty (render krte waqt pta ho ki fill class lgani hai)
+  storeData();
+};
+
+export const deleteBookmark = function(id) { // its a common pattern that while adding something to state you pass whole obj then while deleting it you only need to pass the id.
+  const index = state.bookmarks.findIndex(el => el.id === id);
+  state.bookmarks.splice(index, 1);
+  if (id === state.recipe.id) state.recipe.bookmarked = false; // so that in the view it will not get a fill class
+  storeData();
+}
+
+// local storage -> when adding or deleting bookmarks cuz don't know when it is gone
+const storeData = function() {
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+
+const init  = function() {
+  const storage = localStorage.getItem('bookmarks');
+  if (storage) state.bookmarks = JSON.parse(storage);
+};
+init();
+
+const clearBookmarks = function() {
+  localStorage.clear('bookmarks');
+}
+// clearBookmarks();

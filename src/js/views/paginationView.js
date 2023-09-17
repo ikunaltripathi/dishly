@@ -7,37 +7,33 @@ class PaginationView extends View {
     _parentEle = document.querySelector('.pagination');
 
     _generateMarkup() {
-        const currPage = this._data.currPage;
-        console.log(this._data);
+        const currPage = this._data.page;
         const numOfPages = Math.ceil (this._data.results.length / this._data.resultsPerPage); 
-        if (currPage == 1 && numPage > 1) 
-        return `<button class="btn--inline pagination__btn--next">
-                    <span>Page ${currPage+1}</span>
-                    <svg class="search__icon">
-                        <use href="${icons}#icon-arrow-right"></use>
-                    </svg>
-                </button>`;
+        if (currPage === 1 && numOfPages > 1) 
+        return this._getMarkupButton('next', currPage);
         if (currPage > 1 && currPage < numOfPages) 
-        return `<button class="btn--inline pagination__btn--prev">
-                    <svg class="search__icon">
-                    <use href="${icons}#icon-arrow-left"></use>
-                    </svg>
-                    <span>Page ${currPage-1}</span>
-                    </button>
-                    <button class="btn--inline pagination__btn--next">
-                    <span>Page ${currPage +1}</span>
-                    <svg class="search__icon">
-                        <use href="${icons}#icon-arrow-right"></use>
-                    </svg>
-                </button>`;
-        if (currPage == numOfPages) 
-        return `<button class="btn--inline pagination__btn--prev">
-                    <svg class="search__icon">
-                        <use href="${icons}#icon-arrow-left"></use>
-                    </svg>
-                    <span>Page ${currPage-1}</span>
-                </button>`;
+        return `${this._getMarkupButton('prev', currPage)} ${this._getMarkupButton('next', currPage)}`;
+        if (currPage === numOfPages) 
+        return this._getMarkupButton('prev', currPage);
         return ``;
+    }
+
+    _getMarkupButton(btnType, currPage) {
+        const targetPage = btnType === 'prev'? currPage-1:currPage+1; 
+        return `<button data-goto= "${targetPage}" class="btn--inline pagination__btn--${btnType}">
+                    <span>Page ${targetPage}</span>
+                    <svg class="search__icon">
+                        <use href="${icons}#icon-arrow-${btnType === 'prev'? 'left' : 'right'}"></use>
+                    </svg>
+                </button>`;
+    }
+
+    addHandlerClick(handler) {
+        this._parentEle.addEventListener('click', function(e) {
+            const btnEle = e.target.closest('.btn--inline'); // registering the click even if we click on svg or something else
+            if (!btnEle) return;
+            handler(+btnEle.dataset.goto);
+        });
     }
 
 }

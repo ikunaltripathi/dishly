@@ -5,6 +5,7 @@ import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
+import bookmarksView from './views/bookmarksView.js';
 // scipts in parcel can't have imports/exports so make it a module || // in the newly created files by parcel the path is unavailable so we r gonna import the files and set the path. can import all kinds of assets via parcel.
 // const recipeContainer = document.querySelector('.recipe');
 
@@ -27,15 +28,19 @@ const getRecipe = async function () {
     // renderLoader(recipeContainer);
     recipeView.renderLoader();
 
+    resultsView.update(model.getSearchResults());
     // 1. Load Recipe
     await model.loadRecipe(id);
 
     // 2. Rendering recipe
     recipeView.render(model.state.recipe);
+    // debugger;
+    bookmarksView.update(model.state.bookmarks); // for active class
   } catch (err) {
     // alert(err);
     // recipeView.renderError(`Can't load the recipe`); // wrong place to declare the msg cuz it deals with the view \\ think every components right place.
     recipeView.renderError();
+    console.error(err);
   }
 };
 getRecipe();
@@ -60,12 +65,36 @@ const controlSearchResults = async function () {
   }
 };
 
-const controlPagination = function() {
-  
+const controlPagination = function(gotoPage) { // these func's are just event handlers that run upon some event
+  resultsView.render(model.getSearchResults(gotoPage));
+  paginationView.render(model.state.search);
 }
 
+const controlServings = function(newServings) {
+  model.updateServings(newServings); // controller will not update the servings rather view will. mvc (Keep the controller flexible as possible)
+  // recipeView.render(model.state.recipe);
+  recipeView.update(model.state.recipe);
+};
+
+const controlAddBookmarks = function () {
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+  recipeView.update(model.state.recipe);
+  bookmarksView.render(model.state.bookmarks);// thatswhy we stored entire data about bookmarks to display it
+};
+
+const controlBookmarks = function() { // cuz while calling the update at the getRecipe controller if there are no bookmarks yet so virtual dom is comparing elements to currDom and both the arrays have different length
+  bookmarksView.render(model.state.bookmarks);
+};
+
 const init = function () {
+  bookmarksView.addHandlerBookmarks(controlBookmarks);
   recipeView.addAllRender(getRecipe);
+  recipeView.addHandlerServings(controlServings);
+  recipeView.addHandlerAddBookmark(controlAddBookmarks);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 init();
+
+// in controller only call functions don't write any logic here

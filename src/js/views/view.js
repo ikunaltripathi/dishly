@@ -2,6 +2,17 @@ import icons from 'url:../../img/icons.svg';
 
 export default class View {
   _data;
+
+  // JS DOC -> Documentation format
+  /**
+   * Render the received object to the DOM
+   * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
+   * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM
+   * @returns {undefined | string} A markup string is returned if render=false
+   * @this {Object} View instance
+   * @author Jonas Schmedtmann
+   * @todo Finish implementation
+   */
   render(data, render = true) { // don't want preview.js to render thatswhy render(parameter)
     if (!data || Array.isArray(data) && data.length === 0) return this.renderError(); // !data works for undefined and nulll only & we are receiving an empty array
     this._data = data;
@@ -60,14 +71,14 @@ export default class View {
     this._parentEle.innerHTML = markup;
   }
 
-  renderSuccess(msg = this._message) {
+  renderMessage(_msg = this._message) {
     const markup = `<div class="message">
           <div>
           <svg>
           <use href="${icons}#icon-smile"></use>
           </svg>
           </div>
-          <p>${msg}</p>
+          <p>${_msg}</p>
           </div>`;
     this._parentEle.innerHTML = markup;
   }

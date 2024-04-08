@@ -1,11 +1,13 @@
 import * as model from './model.js';
 import 'core-js/stable'; // only ecmascript stable features and not experimental
 import 'regenerator-runtime/runtime'; // async await
-import recipeView from './views/recipeView.js';
+import { MODAL_CLOSE_SEC } from './config.js'; // named import
+import recipeView from './views/recipeView.js'; // default import
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
 import bookmarksView from './views/bookmarksView.js';
+import addRecipeView from './views/addRecipeView.js';
 // scipts in parcel can't have imports/exports so make it a module || // in the newly created files by parcel the path is unavailable so we r gonna import the files and set the path. can import all kinds of assets via parcel.
 // const recipeContainer = document.querySelector('.recipe');
 
@@ -87,6 +89,29 @@ const controlBookmarks = function() { // cuz while calling the update at the get
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlAddRecipe = async function(newRecipe) {
+  try {
+    addRecipeView.renderLoader();
+    await model.uploadRecipe(newRecipe); //by not awaiting it will immediately return a promise and the error will not be shown
+    recipeView.render(model.state.recipe); 
+    addRecipeView.renderMessage();// with these methods its convenient to add the msgs
+
+    controlBookmarks( ); // not using update here cuz need to insert a new ele \\ always use update for correction
+
+    window.history.pushState(null, '', `${model.state.recipe.id}`); // history -> api, utilises changing id without reloading the page
+    // window.history.back(); for going back in the page
+
+
+    setTimeout(
+      function() {
+        addRecipeView._toggleWindow(); // close form window
+      }, MODAL_CLOSE_SEC * 1000); //2500 no magic no
+  }
+  catch(err) {
+    addRecipeView.renderError(err);
+  }
+};
+
 const init = function () {
   bookmarksView.addHandlerBookmarks(controlBookmarks);
   recipeView.addAllRender(getRecipe);
@@ -94,7 +119,11 @@ const init = function () {
   recipeView.addHandlerAddBookmark(controlAddBookmarks);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
+  addRecipeView.addHandlerUploadRecipe(controlAddRecipe);
 };
 init();
 
 // in controller only call functions don't write any logic here
+
+// --dist-dir ./dist
+// distribution directory

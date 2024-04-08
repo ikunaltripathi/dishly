@@ -1,5 +1,7 @@
-import { API_URL , RESULT_PER_PAGE} from './config';
-import { getJSON } from './helper';
+import { async } from 'regenerator-runtime';
+import { API_URL , RESULT_PER_PAGE, KEY} from './config';
+import { AJAX } from './helper';
+// import { getJSON , sendJSON} from './helper';
 
 export const state = {
   //contains all the data about the application so include the search res
@@ -14,25 +16,29 @@ export const state = {
   bookmarks : []
 };
 
+const getRecipeFormat = function(data) {
+  const { recipe } = data.data;
+  return {
+    //assigning the ref to a new obj
+    id : recipe.id,
+    image: recipe.image_url,
+    time: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    publisher: recipe.publisher,
+    servings: recipe.servings,
+    source: recipe.source_url,
+    title: recipe.title,
+    ...(recipe.key && {key : recipe.key}), //obj is returned then values spread 
+  };
+}
 export const loadRecipe = async function (id) {
   try {
     // const res = await fetch(`${API_URL}/${id}`);
     // const data = await res.json(); // also returns a promise .json is a meth on response obj
     // if (!res.ok) throw new Error(data.message);
     // // console.log(res, data);
-    const data = await getJSON(`${API_URL}/${id}`);
-    const { recipe } = data.data;
-    state.recipe = {
-      //assigning the ref to a new obj
-      id : recipe.id,
-      image: recipe.image_url,
-      time: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-      publisher: recipe.publisher,
-      servings: recipe.servings,
-      source: recipe.source_url,
-      title: recipe.title,
-    };
+    const data = await AJAX(`${API_URL}/${id}?key=${KEY}`);
+    state.recipe = getRecipeFormat(data);
 
     // adding bookmarked prprty to each recipe loaded (basically we are loading these recipes straight from the api then how will we remember that curr recipe we have bookmarked or not thatswhy if we have prev done it then just add a prprty to it.)
     if (state.bookmarks.some(bookmark => bookmark.id === id)) state.recipe.bookmarked = true;
@@ -49,13 +55,14 @@ export const loadRecipe = async function (id) {
 export const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await getJSON(`${API_URL}?search=${query}`);
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`); // including the key here will load search results including our recipes
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
         image: rec.image_url,
         publisher: rec.publisher,
         title: rec.title,
+        ...(rec.key && {key : rec.key})
       };
     });
     state.search.page = 1;
@@ -102,6 +109,35 @@ const storeData = function() {
   localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
 };
 
+export const uploadRecipe = async function(newRecipe) {
+  try {
+    console.log(newRecipe);
+    const ingredients = Object.entries(newRecipe).filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '').
+    map(ing => {
+      const ingArr = ing[1].split(',').map(word => word.trim ());
+      if (ingArr.length != 3) throw new Error("Incorrect Format! please enter the correct Format for Ingredients."); //think of the wrong input
+
+      const [quantity, unit, description] = ingArr;
+      return {quantity : quantity? +quantity : null, unit, description}; // basically in map you can send anything obtained and it will only insert that thing even if no relation to input object
+    });
+    const recipe = {
+      cooking_time : +newRecipe.cookingTime,
+      ingredients,
+      publisher : newRecipe.publisher,
+      servings : +newRecipe.servings,
+      image_url : newRecipe.image,
+      source_url : newRecipe.sourceUrl,
+      title : newRecipe.title
+    };
+    const data = await AJAX(`${API_URL}/?key=${KEY}`, recipe); // url gets in config *****
+    state.recipe = getRecipeFormat(data); // we will pass the same json format that we recieve form the api
+    addBookmark(state.recipe);
+  }
+  catch(err) {
+    throw err;
+  }
+}
+
 const init  = function() {
   const storage = localStorage.getItem('bookmarks');
   if (storage) state.bookmarks = JSON.parse(storage);
@@ -112,3 +148,7 @@ const clearBookmarks = function() {
   localStorage.clear('bookmarks');
 }
 // clearBookmarks();
+
+
+
+

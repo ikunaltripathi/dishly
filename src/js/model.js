@@ -1,10 +1,7 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, RESULT_PER_PAGE, KEY } from './config';
 import { AJAX } from './helper';
-<<<<<<< HEAD
 // import { getJSON , sendJSON} from './helper';
-=======
->>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
 
 export const state = {
   recipe: {},
@@ -20,7 +17,7 @@ export const state = {
 const getRecipeFormat = function (data) {
   const { recipe } = data.data;
   return {
-    id : recipe.id,
+    id: recipe.id,
     image: recipe.image_url,
     time: recipe.cooking_time,
     ingredients: recipe.ingredients,
@@ -28,18 +25,15 @@ const getRecipeFormat = function (data) {
     servings: recipe.servings,
     source: recipe.source_url,
     title: recipe.title,
-    ...(recipe.key && {key : recipe.key}),
+    ...(recipe.key && { key: recipe.key }),
   };
 };
 export const loadRecipe = async function (id) {
   try {
-<<<<<<< HEAD
     // const res = await fetch(`${API_URL}/${id}`);
     // const data = await res.json(); // also returns a promise .json is a meth on response obj
     // if (!res.ok) throw new Error(data.message);
     // // console.log(res, data);
-=======
->>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
     const data = await AJAX(`${API_URL}/${id}?key=${KEY}`);
     state.recipe = getRecipeFormat(data);
 
@@ -54,11 +48,7 @@ export const loadRecipe = async function (id) {
 export const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-<<<<<<< HEAD
     const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`); // including the key here will load search results including our recipes
-=======
-    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
->>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
@@ -108,14 +98,18 @@ const storeData = function () {
 export const uploadRecipe = async function (newRecipe) {
   try {
     console.log(newRecipe);
-    const ingredients = Object.entries(newRecipe).filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '').
-    map(ing => {
-      const ingArr = ing[1].split(',').map(word => word.trim ());
-      if (ingArr.length != 3) throw new Error("Incorrect Format! please enter the correct Format for Ingredients.");
+    const ingredients = Object.entries(newRecipe)
+      .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
+      .map(ing => {
+        const ingArr = ing[1].split(',').map(word => word.trim());
+        if (ingArr.length != 3)
+          throw new Error(
+            'Incorrect Format! please enter the correct Format for Ingredients.'
+          );
 
-      const [quantity, unit, description] = ingArr;
-      return {quantity : quantity? +quantity : null, unit, description};
-    });
+        const [quantity, unit, description] = ingArr;
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
     const recipe = {
       cooking_time: +newRecipe.cookingTime,
       ingredients,
@@ -125,13 +119,8 @@ export const uploadRecipe = async function (newRecipe) {
       source_url: newRecipe.sourceUrl,
       title: newRecipe.title,
     };
-<<<<<<< HEAD
     const data = await AJAX(`${API_URL}/?key=${KEY}`, recipe); // url gets in config *****
     state.recipe = getRecipeFormat(data); // we will pass the same json format that we recieve form the api
-=======
-    const data = await AJAX(`${API_URL}/?key=${KEY}`, recipe);
-    state.recipe = getRecipeFormat(data);
->>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
     addBookmark(state.recipe);
   } catch (err) {
     throw err;
@@ -146,8 +135,4 @@ init();
 
 const clearBookmarks = function () {
   localStorage.clear('bookmarks');
-}
-
-
-
-
+};

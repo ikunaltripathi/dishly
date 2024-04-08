@@ -1,6 +1,3 @@
-//Optimised to the deepest -> All scenarios :
-// 1st page -> no prev, then last page no next etc
-// upon creating even a small property think where it is most suitable like currpage -> state not in this class.
 import icons from 'url:../../img/icons.svg';
 import View from './view';
 class PaginationView extends View {
@@ -30,7 +27,7 @@ class PaginationView extends View {
 
     addHandlerClick(handler) {
         this._parentEle.addEventListener('click', function(e) {
-            const btnEle = e.target.closest('.btn--inline'); // registering the click even if we click on svg or something else
+            const btnEle = e.target.closest('.btn--inline');
             if (!btnEle) return;
             handler(+btnEle.dataset.goto);
         });

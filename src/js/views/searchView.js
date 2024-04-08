@@ -1,4 +1,3 @@
-// one view for every component
 class SearchView {
   #parentEle = document.querySelector('.search');
 
@@ -14,7 +13,6 @@ class SearchView {
 
   addHandlerSearch(handler) {
     this.#parentEle.addEventListener('submit', function (e) {
-      // for the form listen to submit event and prevent default.
       e.preventDefault();
       handler();
     });

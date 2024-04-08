@@ -1,7 +1,7 @@
 import View from './view';
 import icons from 'url:../../img/icons.svg';
 
-class PreviewView extends View { // using previewview as a child of the bookmarks and resultsview
+class PreviewView extends View {
     _parentEle = '';
   _generateMarkup() {
     const id = window.location.hash.slice(1);
@@ -29,6 +29,10 @@ class PreviewView extends View { // using previewview as a child of the bookmark
 }
 export default new PreviewView();
 
+<<<<<<< HEAD
 // why all this fuss?? cuz we can't send parameter result to this generate Markup so to access data directly we want this keyword here so need to set the this._data first so render already has that -> modified the render method.
 
 // adding anything to preview view will instantly reflect in both bookmarks and search results view. beauty of fucn. programming
+=======
+
+>>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387

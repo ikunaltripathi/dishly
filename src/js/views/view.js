@@ -3,7 +3,10 @@ import icons from 'url:../../img/icons.svg';
 export default class View {
   _data;
 
+<<<<<<< HEAD
   // JS DOC -> Documentation format
+=======
+>>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
   /**
    * Render the received object to the DOM
    * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
@@ -13,8 +16,13 @@ export default class View {
    * @author Jonas Schmedtmann
    * @todo Finish implementation
    */
+<<<<<<< HEAD
   render(data, render = true) { // don't want preview.js to render thatswhy render(parameter)
     if (!data || Array.isArray(data) && data.length === 0) return this.renderError(); // !data works for undefined and nulll only & we are receiving an empty array
+=======
+  render(data, render = true) {
+    if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+>>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
     this._data = data;
     const html = this._generateMarkup();
     if (!render) return html;
@@ -22,23 +30,17 @@ export default class View {
     this._parentEle.insertAdjacentHTML('afterbegin', html);
   }
 
-  update(data) { // on every view we want the update
+  update(data) {
     this._data = data;
     const newMarkup = this._generateMarkup();
     const newDom = document.createRange().createContextualFragment(newMarkup);
-    // returns a new range obj which contains a fragment of a document that can contain nodes and parts of text nodes.
-    // createContextualFragment The DocumentFragment interface represents a minimal document object that has no parent It is used as a lightweight version of Document that stores a segment of a document structure comprised of nodes just like a standard document.
     const newElements = Array.from(newDom.querySelectorAll('*'));
     const curElements = Array.from(this._parentEle.querySelectorAll('*'));
     newElements.forEach((newEl, i) => {
       const curEl = curElements[i];
-      // console.log(curEl, newEl.isEqualNode(curEl)); // the parent ele component also got false due to any change in child
-      // if (!newEl.isEqualNode(curEl)) curEl.textContent = newEl.textContent; // cuz the container was false we replaced entire container with text content ||  The textContent property retrieves all of the text inside an element, including the text within its descendant elements (child elements, their children, and so on).
-      if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') curEl.textContent = newEl.textContent; // making sur newEl is a textele
+      if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') curEl.textContent = newEl.textContent;
 
-      // updates change attributes cuz can't go forward more than one time cuz data attri not got updated.
       if (!newEl.isEqualNode(curEl)) {
-        // console.log(newEl.attrib  utes); // returns NamedNodeMap(live changes)
         Array.from(newEl.attributes).forEach(attri => curEl.setAttribute(attri.name, attri.value)); 
       }
     });
@@ -46,7 +48,6 @@ export default class View {
   }
 
   renderLoader() {
-    // presentation logic -> view
     const markup = `<div class="spinner">
                       <svg>
                         <use href="${icons}#icon-loader"></use>

@@ -1,19 +1,17 @@
 import icons from 'url:../../img/icons.svg';
 import View from './view';
 import num2fraction from 'num2fraction';
-// we import pkgs from npm when we want a functionality & don't wanna apply ourselves.(num2F)
 class RecipeView extends View {
   _parentEle = document.querySelector('.recipe');
   _errorMessage = `We couldn't find that recipe. Please try again!`;
   _message = '';
 
   addAllRender(handler) {
-    //publisher-subscriber pattern
     ['load', 'hashchange'].forEach(ev => window.addEventListener(ev, handler));
   }
   
   addHandlerServings(handler) {
-    this._parentEle.addEventListener('click', function(e) { // event delegation add event to parent and then check the target ele but not efficient as its listening for  event in the whole recipe component
+    this._parentEle.addEventListener('click', function(e) {
       const btn = e.target.closest('.btn--tiny'); 
       if (!btn) return;
       const {updateTo} = btn.dataset;
@@ -114,7 +112,6 @@ class RecipeView extends View {
   }
 
   _generateIngredients(ing) {
-    // one task per func
     return `<li class="recipe__ingredient">
       <svg class="recipe__icon">
         <use href="${icons}#icon-check"></use>
@@ -129,9 +126,6 @@ class RecipeView extends View {
     </li>`;
   }
 }
-// don't need any constructor cuz no data passed
-export default new RecipeView(); // why without def it doesn't works cuz named exports require a unique name || not exporting the whole class cuz no use and abstraction, overhead for controller || takeaway -> don't add overheads for controller, pass obj's instead
+export default new RecipeView();
 
-// What we r trying to do? -> create specific class obj and just call some functionality on that obj the func will be working same for all other objects like render spinner in various places. -> oops
 
-// everything related to dom should be in view

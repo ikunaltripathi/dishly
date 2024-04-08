@@ -6,7 +6,6 @@ class ResultsView extends View {
   _message = '';
 
   _generateMarkup() {
-    // return this._data.map(previewView._generateMarkupPreview).join(''); // don't do it like this
     return this._data.map(result => previewView.render(result, false)).join(''); 
   }
 }

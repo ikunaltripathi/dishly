@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // contains functions used frequently in our proj (like json will be used to get data from various objs)
+=======
+>>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387
 
 import { async } from 'regenerator-runtime';
 import { TIMEOUT_SEC } from './config.js';
@@ -30,6 +33,7 @@ export const AJAX = async function(url, uploadData = undefined) {
     }
 }
 
+<<<<<<< HEAD
 // export const getJSON = async function (url) {
 //   try {
 //     const res = await Promise.race([fetch(url), timeout(TIMEOUT_SEC)]); // avoid using hardnumber = 10 (magic number instead define it in config)
@@ -57,3 +61,5 @@ export const AJAX = async function(url, uploadData = undefined) {
 //     throw err;
 //   }
 // };
+=======
+>>>>>>> e65e3e99b03ccaf30ddb2df531b2896388934387

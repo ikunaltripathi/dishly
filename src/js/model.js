@@ -1,7 +1,6 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, RESULT_PER_PAGE, KEY } from './config';
 import { AJAX } from './helper';
-// import { getJSON , sendJSON} from './helper';
 
 export const state = {
   recipe: {},
@@ -30,10 +29,6 @@ const getRecipeFormat = function (data) {
 };
 export const loadRecipe = async function (id) {
   try {
-    // const res = await fetch(`${API_URL}/${id}`);
-    // const data = await res.json(); // also returns a promise .json is a meth on response obj
-    // if (!res.ok) throw new Error(data.message);
-    // // console.log(res, data);
     const data = await AJAX(`${API_URL}/${id}?key=${KEY}`);
     state.recipe = getRecipeFormat(data);
 
@@ -48,7 +43,7 @@ export const loadRecipe = async function (id) {
 export const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`); // including the key here will load search results including our recipes
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
@@ -119,8 +114,8 @@ export const uploadRecipe = async function (newRecipe) {
       source_url: newRecipe.sourceUrl,
       title: newRecipe.title,
     };
-    const data = await AJAX(`${API_URL}/?key=${KEY}`, recipe); // url gets in config *****
-    state.recipe = getRecipeFormat(data); // we will pass the same json format that we recieve form the api
+    const data = await AJAX(`${API_URL}/?key=${KEY}`, recipe);
+    state.recipe = getRecipeFormat(data);
     addBookmark(state.recipe);
   } catch (err) {
     throw err;

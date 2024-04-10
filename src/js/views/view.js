@@ -3,7 +3,6 @@ import icons from 'url:../../img/icons.svg';
 export default class View {
   _data;
 
-  // JS DOC -> Documentation format
   /**
    * Render the received object to the DOM
    * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
@@ -14,9 +13,8 @@ export default class View {
    * @todo Finish implementation
    */
   render(data, render = true) {
-    // don't want preview.js to render thatswhy render(parameter)
     if (!data || (Array.isArray(data) && data.length === 0))
-      return this.renderError(); // !data works for undefined and nulll only & we are receiving an empty array
+      return this.renderError();
     this._data = data;
     const html = this._generateMarkup();
     if (!render) return html;

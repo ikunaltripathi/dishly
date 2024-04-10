@@ -32,7 +32,3 @@ class PreviewView extends View {
   }
 }
 export default new PreviewView();
-
-// why all this fuss?? cuz we can't send parameter result to this generate Markup so to access data directly we want this keyword here so need to set the this._data first so render already has that -> modified the render method.
-
-// adding anything to preview view will instantly reflect in both bookmarks and search results view. beauty of fucn. programming
